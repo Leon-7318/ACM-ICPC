@@ -1,0 +1,19 @@
+import java.util.*;
+
+//对数换底公式：　logx(y) =loge(y) / loge(x)
+//Math.log(x) == ln(x)
+
+public class xx {
+		
+	static Scanner sc = new Scanner(System.in);
+	
+	public static void main(String[] args) {
+			
+		while(sc.hasNext()) {
+			int x = sc.nextInt(), y = sc.nextInt();
+			System.out.println(Math.log(y) / Math.log(x));
+		}
+		
+	}
+	
+}
