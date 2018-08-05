@@ -1,0 +1,48 @@
+import java.util.*;
+
+public class filterPrime {
+	
+	static Scanner sc = new Scanner(System.in);
+	static int[] check; //check[i]=0 表示i是素数
+	static int[] p; // 用来保存筛出的素数
+	static int n, t;
+	
+	public static void main(String[] args) {
+			
+		n = sc.nextInt(); t = 0;
+		check = new int[n+10]; p = new int[n+10];
+		GetPrime();
+//		LinePrime();
+		
+		for(int i=0; i<t; i++) 
+			System.out.print(p[i]+" ");
+		System.out.println();	
+	}
+	
+	//普通筛素数: 时间复杂度是O(nloglogn) 空间复杂度是O(n)
+	static void GetPrime() {
+		for(int i=2; i<=n; i++) {
+			if(check[i] == 0) p[t++] = i;
+			for(int j = 2*i; j <= n; j += i)
+				check[j] = 1;
+		} 
+	}
+	
+	//线性筛素数: 时间复杂度是O(n)
+	static void LinePrime() {
+		
+		for (int i = 2; i < n; ++i){
+			
+		  if (check[i] == 0) p[t++] = i;
+		  
+		  for (int j = 0; j < t; ++j){
+		    if (i * p[j] > n) break;
+		    check[i*p[j]] = 1;
+		    if (i % p[j] == 0) break;
+		  }
+		  
+		}
+		
+	}
+	
+}
