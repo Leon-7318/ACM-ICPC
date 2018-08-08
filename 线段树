@@ -1,0 +1,90 @@
+//递归写法  区间查询(求和) 单点更新  复杂度 O(log maxn)
+import java.util.*;
+
+public class x1 {
+
+	static Scanner sc = new Scanner(System.in);
+	static final int maxn = 100007; 
+	static int[] Sum = new int[maxn<<2];
+	static int[] A = new int[maxn];
+	static int n, m;
+	
+	public static void main(String[] args) {
+
+		while(sc.hasNext()) {
+			Sum = new int[maxn<<2];
+			A = new int[maxn];
+			
+			n = sc.nextInt(); m = sc.nextInt();
+			for(int i=1; i<=n; i++)
+				A[i] = sc.nextInt();
+			
+			Build(1,n,1);
+			
+			while(m-->0) {
+				String s = sc.next();
+				if(s.equals("query")) {
+					int l = sc.nextInt(), r = sc.nextInt();
+					System.out.println(Query(l,r,1,n,1));
+				}else {
+					int id = sc.nextInt(), val = sc.nextInt();
+					Update_node(id,val-A[id],1,n,1);
+				}
+			}
+			
+		}
+	}
+	
+	//建树
+	static void Build(int l, int r, int rt) {
+		//[l,r]表示当前节点区间，rt表示当前节点的实际存储位置
+		if(l == r) {
+			Sum[rt] = A[l]; return ;
+		}
+		int m = (l+r)>>1;
+		
+		Build(l,m,rt<<1); // rt*2
+		Build(m+1,r,rt<<1|1); // rt*2+1
+		
+		PushUp(rt);
+	}
+	
+	//更新节点信息
+	static void PushUp(int rt) {
+		Sum[rt] = Sum[rt<<1] + Sum[rt<<1|1];
+	}
+	
+	//单点更新   假设A[L]+=C
+	static void Update_node(int L, int C, int l, int r, int rt) {
+		//l,r表示当前节点区间，rt表示当前节点编号
+		
+		if(l == r) { //到达叶节点，修改叶节点的值
+			Sum[rt] += C; return ;
+		}
+		
+		int m = (l+r)>>1;
+		
+		//判断需要更新的节点再哪一个区间
+		if(L <= m) Update_node(L,C,l,m,rt<<1);
+		else Update_node(L,C,m+1,r,rt<<1|1);
+		
+		PushUp(rt);//子节点信息更新，所以当前节点信心也要更新
+	}
+	
+	//区间求和
+	static int Query(int L, int R, int l, int r, int rt) {
+		//[L,R]表示要查询的区间，[l,r]表示当前区间，rt:当前节点编号
+		
+		//如果当前区间在查询区间内，直接返回当前区间的和
+		if(L<=l && r<=R) 
+			return Sum[rt];
+		
+		int m = (l+r)>>1;
+		
+		int ans = 0;
+		if(L <= m) ans += Query(L,R,l,m,rt<<1); //左子区间与[L,R]有重叠，递归
+		if(R > m) ans += Query(L,R,m+1,r,rt<<1|1); //右子区间与[L,R]有重叠，递归
+		return ans;
+	}
+	
+}
