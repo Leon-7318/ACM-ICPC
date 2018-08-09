@@ -1,21 +1,24 @@
-//递归写法  区间查询(求和) 单点更新  复杂度 O(log maxn)
+//递归写法  区间查询(求和) 单点更新  区间更新 O(logn)
 import java.util.*;
 
-public class x1 {
+public class Main {
 
 	static Scanner sc = new Scanner(System.in);
 	static final int maxn = 100007; 
 	static int[] Sum = new int[maxn<<2];
+	static int[] Add = new int[maxn<<2]; //懒惰标记
 	static int[] A = new int[maxn];
 	static int n, m;
 	
 	public static void main(String[] args) {
 
 		while(sc.hasNext()) {
-			Sum = new int[maxn<<2];
-			A = new int[maxn];
-			
 			n = sc.nextInt(); m = sc.nextInt();
+
+			Sum = new int[(n+5)<<2];
+			Add = new int[(n+5)<<2];
+			A = new int[n+5];
+			
 			for(int i=1; i<=n; i++)
 				A[i] = sc.nextInt();
 			
@@ -26,9 +29,12 @@ public class x1 {
 				if(s.equals("query")) {
 					int l = sc.nextInt(), r = sc.nextInt();
 					System.out.println(Query(l,r,1,n,1));
-				}else {
+				}else if(s.equals("update_node")){
 					int id = sc.nextInt(), val = sc.nextInt();
 					Update_node(id,val-A[id],1,n,1);
+				}else if(s.equals("update_range")){
+					int l = sc.nextInt(), r = sc.nextInt(), val = sc.nextInt();
+					Update_range(l,r,val,1,n,1);
 				}
 			}
 			
@@ -54,6 +60,21 @@ public class x1 {
 		Sum[rt] = Sum[rt<<1] + Sum[rt<<1|1];
 	}
 	
+	//下推懒惰标记
+	static void PushDown(int rt, int ln, int rn) {
+						//ln,rn为左子树，右子树的数字数量。
+		if(Add[rt]!=0) {
+			//下推标记
+			Add[rt<<1] += Add[rt];
+			Add[rt<<1|1] += Add[rt];
+			//修改子节点的Sum使之与对应的Add相对应
+			Sum[rt<<1] += Add[rt]*ln;
+			Sum[rt<<1|1] += Add[rt]*rn;
+			//清除本节点标记
+			Add[rt] = 0;
+		}
+	}
+	
 	//单点更新   假设A[L]+=C
 	static void Update_node(int L, int C, int l, int r, int rt) {
 		//l,r表示当前节点区间，rt表示当前节点编号
@@ -71,6 +92,22 @@ public class x1 {
 		PushUp(rt);//子节点信息更新，所以当前节点信心也要更新
 	}
 	
+	//区间更新 假设A[L,R]+=C
+	static void Update_range(int L, int R, int C, int l, int r,int rt) {
+		if(L<=l && r<=R) {
+			Sum[rt] += C*(r-l+1); //更新数字和，向上保持正确
+			Add[rt] += C;//增加Add标记，表示本区间的Sum正确，子区间的Sum仍需要根据Add的值来调整
+			return ;
+		}
+		int m = (l+r)>>1;
+		PushDown(rt,m-l+1,r-m); //下推标记
+		
+		if(L <= m) Update_range(L,R,C,l,m,rt<<1);
+		if(R > m) Update_range(L,R,C,m+1,r,rt<<1|1);
+		
+		PushUp(rt); //更新本节点信息 
+	}
+	
 	//区间求和
 	static int Query(int L, int R, int l, int r, int rt) {
 		//[L,R]表示要查询的区间，[l,r]表示当前区间，rt:当前节点编号
@@ -80,6 +117,8 @@ public class x1 {
 			return Sum[rt];
 		
 		int m = (l+r)>>1;
+		
+		PushDown(rt,m-l+1,r-m); //下推标记
 		
 		int ans = 0;
 		if(L <= m) ans += Query(L,R,l,m,rt<<1); //左子区间与[L,R]有重叠，递归
