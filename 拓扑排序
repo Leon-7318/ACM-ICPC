@@ -1,9 +1,6 @@
-拓扑排序
-package 拓扑排序;
-
 import java.util.*;
 
-public class x2 {
+public class Main {
 	
 	static Scanner sc = new Scanner(System.in);
 	
