@@ -1,0 +1,76 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	
+	static Scanner sc = new Scanner(System.in);
+	
+	static int[] a, c;
+	static int n, m, l, r;
+	
+	public static void main(String[] args) throws IOException {
+		
+		while(sc.hasNext()) {
+			n = sc.nextInt(); m = sc.nextInt();
+			a = new int[n+10]; c = new int[n+10];
+			
+			for(int i=1; i<=n; i++) {
+				a[i] = sc.nextInt();
+				update(i,a[i]);
+			}
+			Print();
+			
+			while(m-->0) {
+				String s = sc.next();
+				if(s.equals("query")) {
+					l = sc.nextInt(); r = sc.nextInt();
+					System.out.println(SumRange(l,r));
+				}else {
+					int id = sc.nextInt(), val = sc.nextInt();
+					update(id,val-a[id]); a[id] = val;
+
+					Print();
+				}
+			}
+			
+		}
+		
+	}
+
+	static int lowbit(int x) {
+		return x & -x;
+	}
+	
+	//区间求和
+	static long SumRange(int l, int r) {
+		return Sum(r) - Sum(l-1);
+	}
+	
+	//前i项和
+	static long Sum(int i) {
+		long sum = 0;
+		while(lowbit(i)!=0) {
+			sum += c[i];
+			i -= lowbit(i);
+		}
+		return sum;
+	}
+	
+	//单点更新
+	static void update(int i, int val) {
+		while(i<=n) {
+			c[i] += val;
+			i += lowbit(i);
+		}
+	}
+	
+	static void Print() {
+		for(int i=1; i<=n; i++)
+			System.out.print(c[i]+" ");
+		System.out.println();
+	}
+	
+}
