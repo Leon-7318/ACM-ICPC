@@ -1,5 +1,3 @@
-package 初赛A;
-
 import java.io.*;
 
 public class Main {
