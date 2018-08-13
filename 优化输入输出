@@ -1,0 +1,44 @@
+package 初赛A;
+
+import java.io.*;
+
+public class Main {
+	
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+
+	public static void main(String[] args) throws IOException {
+
+		while(in.nextToken() != StreamTokenizer.TT_EOF) {
+			int n = (int)in.nval, m = readInt();
+			double x = readDouble();
+			long y = readLong();
+			String s = readString();
+			
+			Print(n+" "+m);
+			Print(x+" "+y);
+			Print(s);
+		}
+	}
+	
+	
+	static int readInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+	static double readDouble() throws IOException {
+		in.nextToken();
+		return in.nval;
+	}
+	static String readString() throws IOException {
+		in.nextToken();
+		return in.sval;
+	}
+	static long readLong() throws IOException {
+		in.nextToken();
+		return (long)in.nval;
+	}
+	static void Print(String s) {
+		out.println(s); out.flush();
+	}
+}
