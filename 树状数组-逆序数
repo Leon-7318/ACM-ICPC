@@ -18,7 +18,8 @@ public class 逆序数 {
 			for(int i=1; i<=n; i++) {
 				int x = readInt();
 				update(x,1);
-				ans += i-Sum(x);
+				ans += i-Sum(x);// 统计当前序列中大于x的数的个数
+								// 当前序列中数的总个数  - 当前序列中小于等于x的数的个数
 			}
 			
 			Print(ans+"");
