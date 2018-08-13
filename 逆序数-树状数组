@@ -1,6 +1,6 @@
 import java.io.*;
 
-// n个数(1-n) 
+// n个数 (1-n) 
 
 public class 逆序数 {
 	
