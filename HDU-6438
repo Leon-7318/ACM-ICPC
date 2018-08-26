@@ -1,0 +1,70 @@
+import java.io.*;
+import java.util.*;
+
+public class xx1 {
+	
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	
+	static int n;
+	static PriorityQueue<node> que;
+	
+	static class node implements Comparable<node>{
+		int id, val, k;
+		public node(int id, int val, int k) {
+			this.id = id; this.val = val; this.k = k;
+		}
+		@Override
+		public int compareTo(node e) {
+			if(this.val == e.val)
+				return e.k - this.k;
+			else
+				return this.val - e.val;
+			
+		};
+	}
+	static node[] e; 
+	
+	public static void main(String[] args) throws IOException {
+		
+		int t = readInt();
+		
+		while(t-- > 0) {
+			que = new PriorityQueue<>();
+			long sum = 0, num = 0;
+			n = readInt(); 
+			e = new node[n+10];
+			
+			for(int i=1; i<=n; i++)
+				e[i] = new node(i,readInt(),0);
+			
+			for(int i=1; i<=n; i++){
+				if(que.isEmpty() || que.peek().val >= e[i].val) 
+					que.add(e[i]);
+				else {
+					node tmp = que.poll();
+
+					if(tmp.k == 0) 
+						num++;   
+					
+					sum += e[i].val - tmp.val;
+					tmp.val = e[i].val;
+					tmp.k = 1;
+					que.add(tmp);
+					que.add(e[i]);
+
+				}
+			}
+			
+			out.println(sum+" "+num*2); out.flush();
+		}
+		
+	}
+	
+	
+	static int readInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+	
+}
