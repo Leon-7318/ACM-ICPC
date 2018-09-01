@@ -1,0 +1,51 @@
+import java.util.*;
+
+public class x3 {
+	static Scanner sc = new Scanner(System.in);
+	
+	public static void main(String[] args) {
+		
+		while(sc.hasNext()) {
+			String s = sc.nextLine();
+			System.out.println(solution(s));
+		}
+		
+	}
+	
+	private static String solution(String line) {
+	    // 在此处理单行数据
+		String[] str = line.split(",");
+		String s1 = str[0], s2 = str[1], s3 = str[2];
+		int m = s1.length(), n = s2.length(); 
+		if(m+n!=s3.length())
+			return "false";
+		boolean[][] dp = new boolean[m+10][n+10];
+		dp[0][0] = true;
+		int i=1, j=1;
+		while(i<=m && s1.charAt(i-1)==s3.charAt(i-1))
+			dp[i++][0] = true;
+		while(j<=n && s2.charAt(j-1)==s3.charAt(j-1))
+			dp[0][j++] = true;
+		
+		for(i=1; i<=m; i++)
+			for(j=1; j<=n; j++)
+				if(dp[i-1][j] && s1.charAt(i-1) == s3.charAt(i+j-1)
+				|| dp[i][j-1] && s2.charAt(j-1) == s3.charAt(i+j-1))
+					dp[i][j] = true;
+		
+		for(i=0; i<=m; i++) {
+			for(j=0; j<=n; j++)
+				if(dp[i][j])
+					System.out.print("1 ");
+				else
+					System.out.print("0 ");
+			System.out.println();
+		}
+					
+		// 返回处理后的结果
+		if(dp[m][n])
+			return "true";
+		else
+			return "false";
+	}
+}
