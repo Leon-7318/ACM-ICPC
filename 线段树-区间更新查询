@@ -1,0 +1,147 @@
+package 线段树;
+
+//区间更新 区间最值/求和
+
+import java.util.*;
+import java.io.*;
+
+public class lineTree {
+	
+	static Scanner sc = new Scanner(System.in);
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	
+	static int maxn = 100010;
+	static int n,m, x,y,z, q, k;
+	static class node{
+		int l, r, add, sum, max, min;
+		public node(int l, int r, int add, int sum, int max, int min) {
+			this.l = l; this.r = r; this.add = add; this.sum = sum; this.max = max; this.min = min;
+		}
+	}
+	static node[] tree = new node[maxn<<2];
+	static int[] a = new int[maxn+10];
+	
+	static void pushup(int index) {
+		tree[index].sum = tree[index<<1].sum + tree[index<<1|1].sum;
+		tree[index].max = Math.max(tree[index<<1].max,tree[index<<1|1].max);
+		tree[index].min = Math.min(tree[index<<1].min,tree[index<<1|1].min);
+	}
+	
+	static void pushdown(int index) {
+		if(tree[index].add!=0) {
+			tree[index<<1].sum += (tree[index<<1].r - tree[index<<1].l + 1)*tree[index].add;
+			tree[index<<1|1].sum += (tree[index<<1|1].r - tree[index<<1|1].l + 1)*tree[index].add;
+			tree[index<<1].max += tree[index].add;
+			tree[index<<1|1].max += tree[index].add;
+			tree[index<<1].min += tree[index].add;
+			tree[index<<1|1].min += tree[index].add;
+			tree[index<<1].add += tree[index].add;
+			tree[index<<1|1].add += tree[index].add;
+			tree[index].add = 0;
+		}
+	}
+	
+	static void build(int l, int r, int index) {
+		tree[index].l = l;
+		tree[index].r = r;
+		tree[index].add = 0;
+		if(l == r) {
+			tree[index].sum = a[k];
+//			tree[index].sum = sc.nextInt();
+			tree[index].max = tree[index].min = tree[index].sum;
+			return ;
+		}
+		int mid = (l+r)>>1;
+		build(l,mid,index<<1);
+		build(mid+1,r,index<<1|1);
+		pushup(index);
+	}
+	
+	static void update(int l, int r, int index, int val) {
+		if(l <= tree[index].l && r>= tree[index].r) {
+			tree[index].sum += (tree[index].r - tree[index].l + 1) * val;
+			tree[index].max += val;
+			tree[index].min += val;
+			tree[index].add += val;
+			return ;
+		}
+		pushdown(index);
+		int mid = (tree[index].l + tree[index].r)>>1;
+		if(l <= mid) {
+			update(l,r,index<<1,val);
+		}
+		if(r>mid) {
+			update(l,r,index<<1|1,val);
+		}
+		pushup(index);
+	}
+	
+	static int query(int l, int r, int index) {
+		if(l <= tree[index].l && r >= tree[index].r) {
+			return tree[index].max;
+//			return tree[index].min;
+//			return tree[index].sum;
+		}
+		pushdown(index);
+		int mid = (tree[index].l + tree[index].r)>>1;
+		int ans = 0, Max = 0, Min = 0;
+		if(l <= mid) {
+			ans += query(l,r,index<<1);
+			Max = Math.max(Max, query(l,r,index<<1));
+			Min = Math.min(Min, query(l,r,index<<1));
+		}
+		if(r > mid) {
+			ans += query(l,r,index<<1|1);
+			Max = Math.max(Max,query(l, r,index<<1|1));
+			Min = Math.min(Min,query(l, r,index<<1|1));
+		}
+		return Max;
+//		return Min;
+//		return ans;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		
+		for(int i=0; i<tree.length; i++)
+			tree[i] = new node(0,0,0,0,0,0);
+		
+		while(in.nextToken()!=StreamTokenizer.TT_EOF) {
+			n = (int)in.nval; m = readInt();
+			
+			for(int i=1; i<=n; i++)
+				a[i] = readInt();
+			
+			k = 1; build(1,n,1);
+			
+			while(m-->0) {
+				q = readInt();
+				if(q == 1) { //区间查询
+					x = sc.nextInt(); y = sc.nextInt();
+					System.out.println(query(x,y,1));
+				}else { //区间更新
+					x = sc.nextInt(); y = sc.nextInt(); z = sc.nextInt();
+					update(x,y,1,z);
+					for(int i=1; i<=n; i++)
+						System.out.print(query(i,i,1)+" ");
+					System.out.println();
+				}
+			}
+		}
+		
+	}
+	
+	static int readInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+	static long readLong() throws IOException {
+		in.nextToken();
+		return (long)in.nval;
+	}
+	static String readString() throws IOException {
+		in.nextToken();
+		return (String)in.sval;
+	}
+	
+}
