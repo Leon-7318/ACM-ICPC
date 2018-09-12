@@ -1,0 +1,18 @@
+import java.util.Scanner;
+
+public class xx {
+	static Scanner sc = new Scanner(System.in);
+	public static void main(String[] args) {
+		
+		StringBuilder ss = new StringBuilder();
+		
+		while(sc.hasNext()) {
+			String s = sc.nextLine();
+			if(s.equals("*")) break;
+			ss.append(s); //拼接到结尾处
+			ss.insert(0, s);  //插入到开头
+		}
+		
+		System.out.println(ss.toString());
+	}
+}
