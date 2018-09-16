@@ -1,0 +1,22 @@
+   static BigInteger cal(BigInteger x){
+	        BigInteger l = BigInteger.ONE ;
+	        BigInteger r = x ;
+	        BigInteger temp = BigInteger.ZERO ;
+	        while(!l.equals(r)){
+	            BigInteger mid = (l.add(r)).shiftRight(1);
+	            if(temp.compareTo(BigInteger.ZERO)!=0&&temp.compareTo(mid)==0)
+	                break;
+	            else
+	                temp = mid ;
+	            if(temp.compareTo(BigInteger.ZERO)==0)
+	                temp = mid ;
+	            if(mid.multiply(mid).compareTo(x)==1)
+	                r=mid;
+	            else
+	                l=mid;
+	        }
+	        if(l.multiply(l).compareTo(x)==1)
+	            l=l.subtract(BigInteger.ONE);
+	        
+	        return l;
+	    }
