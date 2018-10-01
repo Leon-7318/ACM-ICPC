@@ -1,0 +1,97 @@
+package 训练10_01;
+
+import java.util.*;
+import java.io.*;
+
+public class E {
+	static Scanner sc = new Scanner(System.in);
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	
+	static class node{
+		int x, y;
+		public node(int x,int y) {
+			this.x = x; this.y = y;
+		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		int t = rInt();
+		w1:while(t-->0) {
+			int n = rInt();
+			node[] e = new node[n+10];
+			float[] d = new float[n+10];
+			float[] r = new float[n+10];
+			float sum = 0, ans = 0;
+			
+			for(int i=1; i<=n; i++)
+				e[i] = new node(rInt(),rInt());
+			
+			d[n] = getDis(e[1],e[n]);
+			for(int i=1; i<n; i++) {
+				d[i] = getDis(e[i],e[i+1]);
+				sum += d[i];
+			}sum += d[n]; 
+			
+			if(n%2==0) {
+				float m1 = 0, m2 = 0;
+				for(int i=1; i<=n; i++)
+					if(i%2==0)
+						m2 += d[i];
+					else 
+						m1 += d[i];
+				if(m1!=m2) {
+					out.println("IMPOSSIBLE");out.flush();
+					continue w1;
+				}
+				float A=n, B=0, C=0;
+				
+				for(int i=1; i<n; i++) 
+					B += Math.pow(-1, i)*i*d[n-i];
+				B *= 2;
+				
+				float[] dm = new float[n+10];
+				for(int i=1; i<=n; i++)
+					dm[i] = (float) (Math.pow(-1, i)*dm[i] + dm[i-1]);
+				
+				for(int i=1; i<n; i++)
+					C += Math.pow(dm[i], 2);
+				 
+				
+				
+			}else {
+				float m = 0;
+				for(int i=2; i<n; i+=2)
+					m += d[i];
+				r[1] = sum/2 - m;
+				if(r[1]<0) {
+					out.println("IMPOSSIBLE");out.flush();
+					continue w1;
+				}
+				ans += r[1]*r[1];
+				for(int i=2; i<=n; i++) {
+					r[i] = d[i-1] - r[i-1];
+					if(r[i]<0) {
+						out.println("IMPOSSIBLE");out.flush();
+						continue w1;
+					}
+					ans += r[i]*r[i];
+				}
+				System.out.printf("%.2f\n",ans*Math.PI);
+				for(int i=1; i<=n; i++) 
+					System.out.printf("%.2f\n",r[i]);
+			}
+			
+		}
+		
+	}
+	
+	static float getDis(node e1, node e2) {
+		return (float) Math.sqrt(Math.pow(e1.x-e2.x, 2)+Math.pow(e1.y-e2.y, 2));
+	}
+	
+	static int rInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+}
