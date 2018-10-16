@@ -1,0 +1,40 @@
+import java.io.*;
+import java.util.*;
+
+public class A {
+	static Scanner sc = new Scanner(System.in);
+
+	public static void main(String[] args) throws IOException {
+		
+		FileReader fr = new FileReader("anniversary.in");
+		BufferedReader br = new BufferedReader(fr);
+		FileWriter fw=new FileWriter(new File("anniversary.out"));
+		BufferedWriter  bw = new BufferedWriter(fw);
+		
+		String line = "";
+		String[] s;
+		
+		while((line=br.readLine())!=null){
+			s = line.split("\\s");
+			int w = Integer.parseInt(s[0]), h = Integer.parseInt(s[1]), 
+			x1 = Integer.parseInt(s[2]), y1 = Integer.parseInt(s[3]),
+			x2 = Integer.parseInt(s[4]), y2 = Integer.parseInt(s[5]);
+			int sx = 0, sy = 0, ex = 0, ey = 0;
+		
+			
+			if(x1==x2 && y1!=y2)
+				bw.write("0 "+y1+" "+w+" "+y2+"\n");
+			if(x1!=x2 && y1==y2)
+				bw.write(x1+" 0 "+x2+" "+h+"\n");
+			if(x1!=x2 && y1!=y2)
+				bw.write(x1+" 0 "+x2+" "+h+"\n");
+
+		}
+		br.close();
+	  fr.close();
+		bw.close();
+		fw.close();
+		
+	}
+
+}
