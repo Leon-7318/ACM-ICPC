@@ -1,0 +1,85 @@
+import java.util.*;
+import java.io.*;
+
+//叉积性质：顺正逆负  
+//点px 直线[p1p2]  mutli(p1,px,p2)
+
+public class xx1 {
+	
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	
+	static int n, m, x1, y1, x2, y2;
+	static line[] a;
+	static node[] e;
+	static int[] ans;
+	
+	static class node{
+		line l1, l2;
+		public node(line l1, line l2) {
+			this.l1 = l1; this.l2 = l2;
+		}
+	}
+	
+	static class line{
+		point p1, p2;
+		public line(point p1, point p2) {
+			this.p1 = p1; this.p2 = p2;
+		}
+	}
+	
+	static class point{
+		float x, y;
+		public point(float x, float y) {
+			this.x = x; this.y = y;
+		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		
+		while(in.nextToken()!=StreamTokenizer.TT_EOF) {
+			n = (int)in.nval; if(n==0) break;
+			m = rInt(); x1 = rInt(); y1=rInt(); x2=rInt(); y2 = rInt(); 
+			a = new line[n+10]; e = new node[n+10];
+			ans = new int[n+10];
+			
+			a[0] = new line(new point(x1,y1),new point(x1,y2));
+			a[n+1] = new line(new point(x2,y1),new point(x2,y2));
+			for(int i=1; i<=n; i++)
+				a[i] = new line(new point(rInt(),y1),new point(rInt(),y2));
+			for(int i=0; i<=n; i++)
+				e[i] = new node(a[i],a[i+1]);
+			
+			while(m-->0) {
+				int x = rInt(), y = rInt();
+				
+				for(int i=0; i<=n; i++)
+					if(judge(x,y,e[i])) {
+						ans[i]++; break;
+					}
+			}
+			for(int i=0; i<=n; i++) {
+				out.println(i+": "+ans[i]); out.flush();
+			}	out.println(); out.flush();
+		}
+		
+	}
+	
+	static boolean judge(float x, float y, node e) {
+		line l1 = e.l1, l2 = e.l2;
+		point px = new point(x,y);
+		float m1 = multi(l1.p2,px,l1.p1), m2 = multi(l2.p2,px,l2.p1);
+		if(m1>=0 && m2<=0)return true;
+		return false;
+	}
+	
+	
+	static float multi(point p0,point p1,point p2){  
+	    return (p1.x-p0.x)*(p2.y-p0.y)-(p2.x-p0.x)*(p1.y-p0.y);  
+	}
+	
+	static int rInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+}
