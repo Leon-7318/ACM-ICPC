@@ -1,0 +1,87 @@
+import java.util.*;
+import java.io.*;
+
+//O(nlogn) 非负边
+
+public class Dij_1 {
+	static Scanner sc = new Scanner(System.in);
+	
+	static long maxn = (long)2E18, INF = (long)2E18;
+	static boolean[] vis;
+	static long[] dis;
+	
+	static class node implements Comparable<node>{
+		int v; long c;
+		public node(int v, long c) {
+			this.v = v; this.c = c;
+		}
+		@Override
+		public int compareTo(node e) {
+			return (int) (this.c - e.c);
+		}
+	}
+	
+	static class edge{
+		int v; long cost;
+		public edge(int v, long cost) {
+			this.v = v; this.cost = cost;
+		}
+	}
+	
+	static Vector<Vector<edge>> E;
+	
+	static void Dij(int n, int start) {
+		vis = new boolean[n+10];
+		dis = new long[n+10];
+		for(int i=1; i<=n; i++) dis[i] = INF;
+		dis[start] = 0;
+		
+		PriorityQueue<node> que = new PriorityQueue<node>();
+		que.add(new node(start,0));
+		node tmp;
+		while(!que.isEmpty()) {
+			tmp = que.poll();
+			int u = tmp.v;
+			if(vis[u]) continue;
+			vis[u] =true;
+			for(int i=0; i<E.get(u).size(); i++) {
+				int v = E.get(tmp.v).get(i).v;
+				long cost = E.get(u).get(i).cost;
+				if(!vis[v] && dis[u]+cost < dis[v]) {
+					dis[v] = dis[u] + cost;
+					que.add(new node(v,dis[v]));
+				}
+			}
+		}
+	}
+	static void addEdge(int u, int v, long cost) {
+		E.get(u).add(new edge(v,cost));
+	}
+  
+	public static void main(String[] args) {
+		
+		while(sc.hasNext()) {
+			int n=sc.nextInt(), m=sc.nextInt();
+			E = new Vector<Vector<edge>>();
+			for(int i=0; i<=n; i++)E.add(new Vector<edge>());
+			
+			while(m-->0) {
+				int u = sc.nextInt(), v = sc.nextInt(); long w = sc.nextLong();
+				addEdge(u,v,w);
+				addEdge(v,u,w);
+			}
+			Dij(n,1);
+			for(int i=1; i<=n; i++)
+				System.out.println(dis[i]);
+		}
+		
+	}
+}
+//5 7
+//1 2 5
+//1 3 20
+//1 4 15
+//2 4 3
+//3 4 2
+//3 5 1
+//4 5 10
