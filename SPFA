@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-//SPFA 复杂度 O（kE）
+//SPFA 复杂度 O（kE） 最坏的情况为O（VE） 在正权图中应优先考虑Dijsktra
 //可以处理负边权
 
 public class Spfa {
