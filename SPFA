@@ -1,0 +1,71 @@
+import java.util.*;
+import java.io.*;
+
+//SPFA 复杂度 O（kE）
+//可以处理负边权
+
+public class Spfa {
+	static Scanner sc = new Scanner(System.in);
+	
+	static int maxn = 5050, INF = (int) Math.pow(2, 32);
+	static class edge{
+		int v, w;
+		public edge(int v, int w) {
+			this.v = v; this.w = w;
+		}
+	}
+	static boolean[] vis = new boolean[maxn];
+	static int[] cnt = new int[maxn];
+	static long[] dis = new long[maxn];
+	
+	static Vector<Vector<edge>> E = new Vector<Vector<edge>>();
+	static Queue<Integer> que = new LinkedList<Integer>();
+	
+	static boolean spfa(int n, int start) {
+		for(int i=1; i<=n; i++) dis[i] = INF;
+		vis[start] = true;
+		dis[start] = 0;
+		que.clear();
+		que.add(start);
+		cnt[start] = 1;
+		while(!que.isEmpty()) {
+			int u = que.poll();
+			vis[u] = false;
+			for(int i=0; i<E.get(u).size(); i++) {
+				int v = E.get(u).get(i).v;
+				if(dis[v]>dis[u]+E.get(u).get(i).w) {
+					dis[v] = dis[u]+E.get(u).get(i).w;
+					if(!vis[v]) {
+						vis[v] = true;
+						que.add(v);
+						if(++cnt[v]>n) return false; //存在负环回路
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	static void addEdge(int u, int v, int w) {
+		E.get(u).add(new edge(v, w));
+	}
+	static int n,m,t;
+	public static void main(String[] args) {
+		t = sc.nextInt();
+		while(sc.hasNext()) {
+			n = sc.nextInt(); m = sc.nextInt(); 
+			E.clear();
+			for(int i=0; i<=n; i++)  E.add(new Vector<edge>());
+			while(m-->0) {
+				addEdge(sc.nextInt(),sc.nextInt(),sc.nextInt());
+			}
+			
+			if(!spfa(n,1)) //存在负环回路
+				System.out.println("no answer");
+			else
+				for(int i=1; i<=n; i++)
+					System.out.println(dis[i]);
+		}
+	}
+
+}
