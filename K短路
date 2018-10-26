@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <cstdio>
 #include <queue>
-#include <vector>
 
 #define MAXN 1005
 #define MAXM 500005
