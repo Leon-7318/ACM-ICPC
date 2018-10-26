@@ -3,23 +3,78 @@
 #include <cstdlib>
 #include <cstdio>
 #include <queue>
+#include <vector>
+
 #define MAXN 1005
 #define MAXM 500005
 #define INF 1000000000
-using namespace std;
 
+using namespace std;
+	
 /*
 	k短路 A*+最短路； 
 	A*: 估价函数 = 当前值+当前位置到终点的距离，即 F（p）=g（p）+h（p）
 	
 	POJ 2449 s-t 的k短路 
 	求终点的单源最短路， 
-*/
+*/	
+	
+	
+int n,m, s,t, k, cnt;
 
-struct node
-{
-    int v, w, next;
-}edge[MAXM], revedge[MAXM];
+int head[MAXN],xhead[MAXN];
+bool vis[MAXN];
+int dis[MAXN];
+
+struct node{
+	int v,w,next;
+} edge[MAXM], xedge[MAXM]; 
+
+void addEdge(int u,int v,int w){
+	edge[cnt].v = v; //当前边的终点 
+	edge[cnt].w = w;
+	edge[cnt].next = head[u]; //起点同为u的下一条边 
+	head[u] = cnt; //起点为u的第一条边的下标 
+	
+	xedge[cnt].v = u;	
+	xedge[cnt].w = w;
+	xedge[cnt].next = xhead[v];
+	xhead[v] = cnt++;
+}
+
+ struct qnode{
+ 	int v,c;
+ 	qnode(int _v=0,int _c=0):v(_v),c(_c){}
+ 	bool operator <(const qnode &r)const{ return c>r.c;}
+ };
+ 
+ void Dijkstra(int n,int start){
+ 	
+ 	memset(vis,false,sizeof(vis));
+ 	for(int i=0;i<=n;i++)dis[i]=INF;
+ 	
+ 	priority_queue<qnode>que;
+ 	while(!que.empty())que.pop();
+ 	
+ 	dis[start]=0;
+ 	que.push(qnode(start,0));
+ 	qnode tmp;
+ 	while(!que.empty()){
+ 		tmp=que.top();
+ 		que.pop();
+ 		int u=tmp.v;
+ 		if(vis[u])continue;
+ 		vis[u]=true;
+ 		for(int i=xhead[u]; i!=-1; i=xedge[i].next){
+ 			int v = xedge[i].v;
+ 			int w = xedge[i].w;
+ 			if(!vis[v] && dis[v]>dis[u]+w){
+ 				dis[v] = dis[u]+w;
+			 	que.push(qnode(v,dis[v]));
+			 }
+		 }
+ 	}
+ }
 
 struct A
 {
@@ -30,97 +85,44 @@ struct A
     }
 };
 
-int e, vis[MAXN], d[MAXN], q[MAXM * 5];
-int head[MAXN], revhead[MAXN];
-int n, m, s, t, k;
-
-void init()
-{
-    e = 0;
-    memset(head, -1, sizeof(head));
-    memset(revhead, -1, sizeof(revhead));
-}
-
-void insert(int x, int y, int w)
-{
-    edge[e].v = y;
-    edge[e].w = w;
-    edge[e].next = head[x];
-    head[x] = e;
-    
-    revedge[e].v = x;
-    revedge[e].w = w;
-    revedge[e].next =revhead[y];
-    revhead[y] = e++;
-}
-
-void spfa(int src)
-{
-    for(int i = 1; i <= n; i++) d[i] = INF;
-    memset(vis, 0, sizeof(vis));
-    vis[src] = 0;
-    int h = 0, t = 1;
-    q[0] = src;
-    d[src] = 0;
-    while(h < t)
-    {
-        int u = q[h++];
-        vis[u] = 0;
-        for(int i = revhead[u] ; i != -1; i = revedge[i].next)
-        {
-            int v = revedge[i].v;
-            int w = revedge[i].w;
-            if(d[v] > d[u] + w)
-            {
-                d[v] = d[u] + w;
-                if(!vis[v])
-                {
-                    q[t++] = v;
-                    vis[v] = 1;
-                }
-            }
-        }
-    }
-}
-int Astar(int src, int des)
-{
+int Astar(int src, int des){
     int cnt = 0;
     priority_queue<A>Q;
     if(src == des) k++;
-    if(d[src] == INF) return -1;
+    if(dis[src] == INF) return -1;
     A t, tt;
-    t.v = src, t.g = 0, t.f = t.g + d[src];
+    t.v = src, t.g = 0, t.f = t.g + dis[src];
     Q.push(t);
     while(!Q.empty()){
-        tt = Q.top();
-        Q.pop();
+        tt = Q.top(); Q.pop();
         if(tt.v == des){
             cnt++;
             if(cnt == k) return tt.g;
         }
-        for(int i = head[tt.v]; i != -1; i = edge[i].next){
-            t.v = edge[i].v;
-            t.g = tt.g + edge[i].w;
-            t.f = t.g + d[t.v];
-            Q.push(t);
-        }
+        int u = tt.v;
+        for(int i=head[u]; i!=-1; i=edge[i].next){
+        	t.v = edge[i].v;
+        	t.g = tt.g + edge[i].w; 
+        	t.f = t.g + dis[t.v];
+			Q.push(t);
+		}
     }
     return -1;
 }
-int main()
-{
-    int x, y, w;
-    while(scanf("%d%d", &n, &m) != EOF)
-    {
-        init();
-        for(int i = 1; i <= m; i++)
-        {
+
+int main(){
+	int x, y, w;
+    while(scanf("%d%d", &n, &m) != EOF){
+    	cnt = 0;
+    	memset(head,-1,sizeof(head));
+    	memset(xhead,-1,sizeof(xhead));
+        for(int i = 1; i <= m; i++){
             scanf("%d%d%d", &x, &y, &w);
-            insert(x, y, w);
+            addEdge(x, y, w);
         }
-        scanf("%d%d%d", &s, &t, &k);
-        spfa(t);
-        printf("%d\n", Astar(s, t));
+        scanf("%d%d%d",&s,&t,&k);
+        Dijkstra(n,t);
+		printf("%d\n",Astar(s,t));
     }
     return 0;
-}
+} 
