@@ -1,0 +1,68 @@
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+
+#define VN 1005
+#define EN 20000
+#define INF 0x3f3f3f3f
+
+using namespace std;
+
+int n, m, cnt;
+
+bool vis[VN];
+int lowc[VN], cost[VN][VN];
+
+int Prim(){
+	int ans=0;
+	memset(vis,false,sizeof(vis));
+	vis[0]=true;
+	for(int i=1;i<n;i++)lowc[i]=cost[0][i];
+	for(int i=1;i<n;i++){
+		int minc=INF, p=-1;
+		for(int j=0;j<n;j++)
+			if(!vis[j]&&minc>lowc[j]){
+				minc=lowc[j];
+				p=j;
+			}
+		if(minc==INF)return -1;//原图不连通
+		ans+=minc;
+		vis[p]=true;
+		for(int j=0;j<n;j++)
+			if(!vis[j]&&lowc[j]>cost[p][j])
+				lowc[j]=cost[p][j];
+	}
+	return ans;
+}
+
+int main(){
+	int u,v,w;
+
+	scanf("%d%d",&n,&m);
+	memset(cost,INF,sizeof(cost));
+	while(m--){
+		scanf("%d%d%d",&u,&v,&w);
+		cost[u][v] = w;
+		cost[v][u] = w;
+	}
+	
+	printf("%d\n",Prim());
+	
+	return 0;
+} 
+
+/*
+5 7
+0 1 3
+0 2 5
+1 2 1
+1 3 2
+2 3 8
+2 4 6
+3 4 4 
+
+10
+*/
+ 
+
+
