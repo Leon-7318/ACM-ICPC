@@ -1,0 +1,56 @@
+import java.io.*;
+
+// n个数 (1-n) 
+
+public class 逆序数 {
+	
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	static int[] a;
+	static int n;
+	
+	public static void main(String[] args) throws IOException {
+		
+		while(in.nextToken()!=StreamTokenizer.TT_EOF) {
+			n = (int)in.nval; a = new int[n+10];
+			int ans = 0;
+			
+			for(int i=1; i<=n; i++) {
+				int x = readInt();
+				update(x,1);
+				ans += i-Sum(x);// 统计当前序列中大于x的数的个数
+						// 当前序列中数的总个数  - 当前序列中小于等于x的数的个数
+			}
+			
+			Print(ans+"");
+		}
+		
+	}
+	
+	static int lowbit(int x) {
+		return x&-x;
+	}
+	static long Sum(int i) {
+		long sum = 0;
+		while(lowbit(i)!=0) {
+			sum += a[i];
+			i -= lowbit(i);
+		}
+		return sum;
+	}
+	static void update(int i,int val) {
+		while(i<=n) {
+			a[i] += val;
+			i += lowbit(i);
+		}
+	}
+	
+	static int readInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+	static void Print(String s){
+		out.println(s); out.flush();
+	}
+	
+}

@@ -1,0 +1,67 @@
+//树状数组  查询区间最值
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	
+	static StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+	static PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+	
+	static int n, m;
+	static int[] a, c;
+	
+	public static void main(String[] args) throws IOException {
+		
+		while(in.nextToken()!=StreamTokenizer.TT_EOF) {
+			n = (int)in.nval; m = readInt();
+			a = new int[n+10]; c = new int[n+10];
+			
+			for(int i=1; i<=n; i++)
+				a[i] = readInt();
+			
+			Init(n);
+			
+			while(m-->1) {
+				out.print(Query(readInt(),readInt())+" ");
+				out.flush();
+			}
+			out.println(Query(readInt(),readInt()));
+			out.flush();
+		}
+		
+		
+	}
+	
+	static void Init(int n){
+	     for(int i=1;i<=n;i++){
+	          c[i]=a[i];
+	          for(int j=1;j<Lowbit(i);j<<=1){
+	               c[i]=Math.min(c[i],c[i-j]);
+	          }
+	     }
+	}
+	
+	
+	static int Query(int l,int r){
+	     int ans=a[r];
+	     while(true){
+	          ans=Math.min(ans,a[r]);
+	          if(r==l) break;
+	          for(r-=1;r-l>=Lowbit(r);r-=Lowbit(r)){
+	               ans=Math.min(ans,c[r]);
+	          }
+	     }
+	     return ans;
+	}
+	
+	static int Lowbit(int x) {
+		return x&-x;
+	}
+	
+	static int readInt() throws IOException {
+		in.nextToken();
+		return (int)in.nval;
+	}
+	
+}
