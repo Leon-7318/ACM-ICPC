@@ -1,0 +1,86 @@
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <queue>
+#include <vector>
+
+#define MAXN 1005
+#define MAXM 500005
+#define INF 1000000000
+
+using namespace std;
+	
+//SPFA 复杂度 O（kE） 最坏的情况为O（VE） 在正权图中应优先考虑Dijsktra
+//可以处理负边权	
+	
+int n,m,count;
+
+int head[MAXN],dis[MAXN],cnt[MAXN];
+bool vis[MAXN];
+
+struct node{
+	int v,w,next;
+} edge[MAXM]; 
+
+void addEdge(int u,int v,int w){
+	edge[count].v = v; //当前边的终点 
+	edge[count].w = w;
+	edge[count].next = head[u]; //起点同为u的下一条边 
+	head[u] = count++; //起点为u的第一条边的下标 
+}
+
+bool SPFA(int start, int n){
+	memset(vis,false,sizeof(vis));
+	for(int i=1; i<=n; i++) dis[i] = INF;
+	vis[start] = true;
+	dis[start] = 0;
+	queue<int> que;
+	while(!que.empty()) que.pop();
+	que.push(start);
+	memset(cnt,0,sizeof(cnt));
+	cnt[start] = 1;
+	while(!que.empty()){
+		int u = que.front(); que.pop();
+		vis[u] = false;
+		
+		for(int i=head[u]; i!=-1; i=edge[i].next){
+			int v = edge[i].v;
+			if(dis[v]>dis[u]+edge[i].w){
+				dis[v] = dis[u]+edge[i].w;				
+				if(!vis[v]){
+					vis[v] = true;					
+					que.push(v);
+					if(++cnt[v]>n) return false;//存在负环回路
+				}
+			}
+		}
+	}
+	return true;
+}
+
+int main(){
+	int u, v, w;
+    while(scanf("%d%d", &n, &m) != EOF){
+    	count = 0;
+    	memset(head,-1,sizeof(head));
+    	
+        for(int i = 1; i <= m; i++){
+            scanf("%d%d%d", &u, &v, &w);
+            addEdge(u, v, w);
+            addEdge(v, u, w);
+        }
+		SPFA(1,n);        
+        for(int i=1; i<=n; i++)
+        	printf("%d\n",dis[i]);
+    }
+    return 0;
+} 
+//5 7
+//1 2 5
+//1 3 20
+//1 4 15
+//2 4 3
+//3 4 2
+//3 5 1
+//4 5 10
